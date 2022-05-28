@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main page</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Card</th>
+        </tr>
+        {% for index, row in df.iterrows() %}
+            <tr>
+                <td>
+                    {{ row.id }}
+                </td>
+                <td>
+                    {{ row.first_name }}
+                </td>
+                <td>
+                    {{ row.last_name }}
+                </td>
+                <td>
+                    {{ row.card_id }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+    
+</body>
+</html>
