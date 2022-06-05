@@ -11,15 +11,23 @@
 
     <table>
         <tr>
-            <th>ID</th>
+            <th>Time</th>
+            <th>Event type</th>
+            <th>Card ID</th>
+            <th>User ID</th>
             <th>First name</th>
             <th>Last name</th>
-            <th>Card</th>
         </tr>
         {% for index, row in df.iterrows() %}
             <tr>
                 <td>
-                    {{ row.id }}
+                    {{ row.log_time }}
+                </td>
+                <td>
+                    {{ row.event_type }}
+                </td>
+                <td>
+                    {{ row.card_id }}
                 </td>
                 <td>
                     {{ row.first_name }}
