@@ -16,6 +16,17 @@ class Card(db.Model):
 
     id = db.Column(db.String(20), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    events = db.relationship('Event', backref='events', lazy=True, uselist=True)
     
     def __repr__(self):
-        return f'Card(id={self.id}, user_id={self.user_id}'
+        return f'Card(id={self.id}, user_id={self.user_id})'
+
+class Event(db.Model):
+    __tablename__ = 'events'
+
+    log_time = db.Column(db.DateTime, primary_key=True)
+    event_type = db.Column(db.String(5), nullable=False)
+    card_id = db.Column(db.String(20), db.ForeignKey('cards.id'), nullable=False)
+
+    def __repr__(self):
+        return f'Event(log_time={self.log_time}, event_type={self.event_type}, card_id={self.card_id})'
