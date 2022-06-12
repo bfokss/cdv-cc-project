@@ -1,0 +1,52 @@
+<section class="page-section bg-light text-secondary mb-0" id="timer">
+    <div class="container d-flex align-items-center flex-column">
+        <!-- Timer Section Heading-->
+        
+            {% if user.first_name|length and user is defined and activeSession == True%}
+                <h2 class="page-section-heading text-center text-uppercase text-secondary">
+                    Session time:
+                </h2>
+                <h1 class="timer" id="noclock">
+                    <p id="year">{{user.log_time.year}}</p>
+                    <p id="month">{{user.log_time.month}}</p>
+                    <p id="day">{{user.log_time.day}}</p>
+                    <p id="hour">{{user.log_time.hour}}</p>
+                    <p id="minute">{{user.log_time.minute}}</p>
+                    <p id="second">{{user.log_time.second}}</p>
+                </h1>
+            {% else %}
+                <h2 class="page-section-heading text-center text-uppercase text-secondary">
+                    Current time:
+                </h2>
+                <h1 class="timer" id="clock">
+                    No session started.
+                </h1>
+            {% endif %}
+        
+        
+        <!-- Icon Divider-->
+        <div class="divider-custom divider-dark">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+        <!-- About Section Content-->
+        
+        {% if activeSession == True %}
+            <p class="ContentSection-subheading font-weight-light mb-0" >
+                    Training date:
+                    <section id="training_date">
+
+                    </section>
+            </p>
+        {% else %}
+            <p class="ContentSection-subheading font-weight-light mb-0" id="date">
+                Today's date
+                <section id="date">
+
+                </section>
+            </p>
+        {% endif %}
+        
+    </div>
+</section>

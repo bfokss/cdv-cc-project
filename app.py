@@ -20,7 +20,20 @@ def index():
     data = query.all()
     df = pd.DataFrame(data)
 
-    return render_template('index.html', df=df)
+    getUser = db.session.query(
+        User.first_name,
+    ).select_from(User).join(Card, full=True).order_by(Event.log_time.desc())
+
+    activeSession = False
+
+    #userQuery = db.session.query(User).join(Card, full=True).order_by(Event.log_time.desc()).slice(1,2)
+    userData = query.first()
+    lastStartUser = query.filter(Event.event_type=='start')
+    print(lastStartUser)
+    #print(userData)
+    #print(activeSession)
+
+    return render_template('home/index.html', df=df, user=userData, activeSession=activeSession)
 
 
 if __name__ == '__main__':
