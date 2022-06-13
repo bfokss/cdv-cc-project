@@ -30,3 +30,13 @@ class Event(db.Model):
 
     def __repr__(self):
         return f'Event(log_time={self.log_time}, event_type={self.event_type}, card_id={self.card_id})'
+
+class Training(db.Model):
+    __tablename__ = 'trainings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    card_id = db.Column(db.String(20), db.ForeignKey('cards.id'), nullable=False)
+    shift_length = db.Column(db.Integer, nullable=False) # in seconds
+
+    def __repr__(self):
+        return f'Training(id={self.id}, card_id={self.card_id}, shift_length={self.shift_length})'
