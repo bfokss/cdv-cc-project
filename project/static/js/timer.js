@@ -1,44 +1,33 @@
+function formatDate(dateTime){
+    return outputDate = String(dateTime.getDate()).padStart(2, '0')+"-"+String(dateTime.getMonth()+1).padStart(2, '0')+"-"+String(dateTime.getFullYear()).padStart(2, '0');
+}
+
+function formatTime(dateTime){
+    return outputTime = String(dateTime.getHours()).padStart(2, '0')+":"+String(dateTime.getMinutes()).padStart(2, '0')+":"+String(dateTime.getSeconds()).padStart(2, '0');
+}
+
 
 function showTime(){
-    var d = new Date();
-    var year = d.getFullYear();
-    var month = d.getMonth();
-    var date = d.getDate();
-    var hour = d.getHours();
-    var min = d.getMinutes();
-    var sec = d.getSeconds();
-
-
-    hour = ("0" + hour).slice(-2);
-    min = ("0" + min).slice(-2);
-    sec = ("0" + sec).slice(-2);
-    
-    if(noclock !== null){
-        var currentDateTime = d;
+    var currentDateTime = new Date();
  
-        var trainingYear = trainingDateTime.getFullYear();
-        var trainingMonth = trainingDateTime.getMonth();
-        var trainingDay = trainingDateTime.getDate();
-
+    if(noclock !== null){
 
         var diff = Math.abs(currentDateTime.getTime() - trainingDateTime.getTime());
         var diffHours = Math.floor(diff / 1000 / 60 / 60);
         diff -= diffHours * 1000 * 60 * 60;
         var diffMinutes = Math.floor(diff / 1000 / 60);
 
-        
 
-        noclock.innerHTML = diffHours+':'+diffMinutes;
-        trainingMonth += 1;
-        tDate.innerHTML = trainingDay+'-'+trainingMonth+'-'+trainingYear;
+        noclock.innerHTML = String(diffHours).padStart(2, '0')+':'+String(diffMinutes).padStart(2, '0');
+        tDate.innerHTML = formatDate(trainingDateTime);
         
     }
     else{
-        month += 1;
-        clock.innerHTML = hour.padStart(2, '0')+':'+min.padStart(2, '0')+':'+sec.padStart(2, '0');
-        cDate.innerHTML = date+'-'+month+'-'+year;
+        clock.innerHTML = formatTime(currentDateTime);
+        cDate.innerHTML = formatDate(currentDateTime);
     }
 }
+
 
 var noclock = document.getElementById("noclock");
 var clock = document.getElementById("clock");
@@ -48,7 +37,7 @@ var cDate = document.getElementById("date");
 
 if(noclock !== null){
     var tDateTime = document.getElementById("datetime").innerHTML;
-    trainingDateTime = new Date(tDateTime);
+    var trainingDateTime = new Date(tDateTime);
 }
 
 showTime();
