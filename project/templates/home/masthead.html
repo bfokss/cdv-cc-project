@@ -2,11 +2,14 @@
     <div class="container d-flex align-items-center flex-column">
         <!-- Masthead Heading-->
         <h1 class="masthead-heading text-uppercase mb-0">
-            {% if user.first_name|length or user is defined %}
-                Hello, {{ user.first_name }}
-            {% else %}
-                Welcome to GymTimer
-            {% endif %}
+            Hello, {{ user.first_name }}.
         </h1>
+            {% if isTraining %}
+                <br>
+                <p> Your room temperature: </p>
+            {% else %}
+                <br>
+                <p> Welcome to GymTimer </p>  
+            {% endif %}  
     </div>
 </header>
