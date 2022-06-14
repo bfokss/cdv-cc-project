@@ -4,14 +4,14 @@
         
             {% if isTraining == True %}
                 <h2 class="page-section-heading text-center text-uppercase text-secondary">
-                    Session time:
+                    Session time
                 </h2>
                 <h1 class="timer" id="noclock">
                     <p id="datetime" hidden>{{userFirstRow.log_time}}</p>
                 </h1>
             {% else %}
                 <h2 class="page-section-heading text-center text-uppercase text-secondary">
-                    Current time:
+                    Current time
                 </h2>
                 <h1 class="timer" id="clock" display="hidden">
                     No session started.
@@ -28,16 +28,16 @@
         <!-- Date Section Content-->
         
         {% if isTraining == True %}
-            <p class="lead font-weight-light mb-0">
-                    Training date:
-                    <section id="training_date">
+            <p class="h2 mb-0">
+                    Training date
+                    <section class="h4" id="training_date">
 
                     </section>
             </p>
         {% else %}
-            <p class="lead font-weight-light mb-0">
-                Today's date:
-                <section id="date">
+            <p class="h2 mb-0">
+                Today's date
+                <section class="h4" id="date">
 
                 </section>
             </p>
