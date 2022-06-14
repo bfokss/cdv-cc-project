@@ -1,0 +1,52 @@
+<section class="page-section bg-primary text-light mb-0" id="Last10">
+    <div class="container d-flex align-items-center flex-column">
+        <h1>Last 10 sessions</h1>
+        <!-- Icon Divider-->
+        <div class="divider-custom divider-light">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fa-solid fa-dumbbell"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+        <!-- Sessions Section Heading-->
+        <div class="row">
+            <div class="col-lg-6 ms-auto">
+                
+                <p class="lead">
+                    Here you can see your last 10 training sessions.<br>
+                    If you are interested in checking all sessions click the button below.
+                    <br>
+                    <div class="d-grid">
+                        <button class="btn btn-secondary btn-block ">SESSIONS</button>
+                    </div>
+                    
+                </p>
+            </div>
+            <div class="col-lg-6 me-auto">
+                <div class="card bg-light border-secondary">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for index, row in userTrainings.iterrows() if index < userTrainingsLimit%}
+                        <tr>
+                            <th scope="row">{{ index+1 }}</th>
+                            <td>{{ row.log_time.date() }}</td>
+                            <td>{{ row.log_time.time() }}</td>
+                            <td>{{ row.event_type }}</td>
+                            <td>{{ row.user_id }}</td>
+                            <td>{{ row.first_name }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

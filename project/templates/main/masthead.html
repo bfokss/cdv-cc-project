@@ -1,0 +1,17 @@
+<header class="masthead bg-primary text-white text-center">
+    <div class="container d-flex align-items-center flex-column">
+        <!-- Masthead Heading-->
+        <h1 class="masthead-heading text-uppercase mb-0">
+            Hello, {{ userFirstRow.first_name }}.
+        </h1>
+        <!-- Icon Divider-->
+        <div class="divider-custom divider-light mb-0">
+            <div class="divider-custom-icon"><i class="fa-solid fa-dumbbell"></i></div>
+        </div>
+            {% if isTraining %}
+                <p class="lead"> Your room temperature: </p>
+            {% else %}
+                <p class="lead"> Welcome to GymTimer </p>  
+            {% endif %}  
+    </div>
+</header>
