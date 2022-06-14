@@ -32,19 +32,17 @@ def user_index():
             User.first_name,
             User.last_name
         ).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId).order_by(Event.log_time.desc())
+
         data = query.all()
+        userFirstRow = query.first()
         userData = pd.DataFrame(data)
 
         trainings = db.session.query(Event.log_time, Event.event_type, Card.user_id, User.first_name).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId,Event.event_type=="start").order_by(Event.log_time.desc()).all()
         userTrainings = pd.DataFrame(trainings)
-        userTrainingsLimit = 10
-        print(trainings)
 
-        userFirstRow = query.first()
+        userTrainingsLimit = 10
 
         isTraining = userData['event_type'][0]=='start'
-
-        print(userData)
 
         return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings, userTrainingsLimit=userTrainingsLimit)
 
