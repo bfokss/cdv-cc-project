@@ -1,13 +1,27 @@
-from flask import render_template
+from flask import render_template, request, redirect, url_for
 import pandas as pd
-
 from project import app, db
 from project.models import User, Card, Event
-import project.api
+
+USER_TRAININGS_LIMIT = 10
 
 
 @app.route('/', methods=['GET'])
 def index():
+    return render_template('home.html')
+
+
+@app.route('/users', methods=['GET'])
+def user_index():
+    userId = request.args.get('id')
+
+    userExists = db.session.query(User.id).filter_by(id=userId).first() is not None
+
+    
+    if ('id' not in request.args) or (not userExists):
+        return redirect(url_for('index'))
+    
+
     query = db.session.query(
         Event.log_time,
         Event.event_type,
@@ -16,11 +30,21 @@ def index():
         User.id,
         User.first_name,
         User.last_name
-    ).select_from(Event).join(Card, full=True).join(User, full=True).order_by(Event.log_time.desc())
-    data = query.all()
-    df = pd.DataFrame(data)
+    ).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId).order_by(Event.log_time.desc())
 
-    return render_template('index.html', df=df)
+    data = query.all()
+    userFirstRow = query.first()
+    userData = pd.DataFrame(data)
+
+    #TODO Resolve if we need all trainings in index.html
+    trainings = db.session.query(Event.log_time, Event.event_type, Card.user_id, User.first_name).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId,Event.event_type=="start").order_by(Event.log_time.desc()).all()
+    userTrainings = pd.DataFrame(trainings)
+
+    isTraining = userData['event_type'][0]=='start'
+
+    return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings, userTrainingsLimit=USER_TRAININGS_LIMIT)
+
+
 
 
 if __name__ == '__main__':
