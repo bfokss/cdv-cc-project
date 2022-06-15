@@ -1,10 +1,9 @@
 from flask import render_template, request, redirect, url_for
 import pandas as pd
-
-
 from project import app, db
 from project.models import User, Card, Event
-import project.api
+
+USER_TRAININGS_LIMIT = 10
 
 
 @app.route('/', methods=['GET'])
@@ -22,29 +21,28 @@ def user_index():
     if ('id' not in request.args) or (not userExists):
         return redirect(url_for('index'))
     
-    else:
-        query = db.session.query(
-            Event.log_time,
-            Event.event_type,
-            Event.card_id,
-            Card.user_id,
-            User.id,
-            User.first_name,
-            User.last_name
-        ).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId).order_by(Event.log_time.desc())
 
-        data = query.all()
-        userFirstRow = query.first()
-        userData = pd.DataFrame(data)
+    query = db.session.query(
+        Event.log_time,
+        Event.event_type,
+        Event.card_id,
+        Card.user_id,
+        User.id,
+        User.first_name,
+        User.last_name
+    ).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId).order_by(Event.log_time.desc())
 
-        trainings = db.session.query(Event.log_time, Event.event_type, Card.user_id, User.first_name).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId,Event.event_type=="start").order_by(Event.log_time.desc()).all()
-        userTrainings = pd.DataFrame(trainings)
+    data = query.all()
+    userFirstRow = query.first()
+    userData = pd.DataFrame(data)
 
-        userTrainingsLimit = 10
+    #TODO Resolve if we need all trainings in index.html
+    trainings = db.session.query(Event.log_time, Event.event_type, Card.user_id, User.first_name).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId,Event.event_type=="start").order_by(Event.log_time.desc()).all()
+    userTrainings = pd.DataFrame(trainings)
 
-        isTraining = userData['event_type'][0]=='start'
+    isTraining = userData['event_type'][0]=='start'
 
-        return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings, userTrainingsLimit=userTrainingsLimit)
+    return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings, userTrainingsLimit=USER_TRAININGS_LIMIT)
 
 
 
