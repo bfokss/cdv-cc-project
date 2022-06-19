@@ -1,6 +1,13 @@
+# General
 .vscode
+
+# Python code
 __pycache__
 venv
 Config.py
 migrations
 .venv
+
+# .NET code
+obj
+config.json
