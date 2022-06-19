@@ -17,6 +17,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             raise Exception("log_time or card_id not provided")
     except Exception as e:
         return func.HttpResponse(
+            logging.error(e),
              f"Error when reading request's body: {e}",
              status_code=500
         )
