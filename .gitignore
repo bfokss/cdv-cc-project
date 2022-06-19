@@ -10,4 +10,5 @@ migrations
 
 # .NET code
 obj
+bin
 config.json
