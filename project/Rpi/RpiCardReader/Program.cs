@@ -1,15 +1,40 @@
-﻿using System.Device.Gpio;
+﻿// Imports
+using System.Device.Gpio;
 using System.Device.Spi;
+using Iot.Device.DHTxx;
 using Iot.Device.Mfrc522;
 using Iot.Device.Rfid;
+using UnitsNet;
 using Newtonsoft.Json;
+using System.Threading;
 
+// Consts
+const int APP_WAIT_TIME = 5000;
+
+// HttpClient declaration
 HttpClient client = new HttpClient();
 
+
+// Convert RFID card to HEX
 string GetCardId(Data106kbpsTypeA card) => Convert.ToHexString(card.NfcId);
 
+// GpioController declaration
 GpioController gpioController = new GpioController();
+
+// Pins preparation
 int pinReset = 21;
+int pinGreen = 22;
+int pinYellow = 23;
+int pinRed = 24;
+int pinDht = 16; 
+
+// Pins opening
+gpioController.OpenPin(pinGreen, PinMode.Output);
+gpioController.OpenPin(pinYellow, PinMode.Output);
+gpioController.OpenPin(pinRed, PinMode.Output);
+
+// Dht11 sensor declaration
+Dht11 dhtSensor = new Dht11(pinDht);
 
 SpiConnectionSettings connection = new(0, 0);
 connection.ClockFrequency = 10_000_000;
@@ -39,9 +64,49 @@ source.Cancel();
 
 await task;
 
+void welcomeBlink(){
+    var onTime = 500;
+    var offTime = 300;
+    var iterations = 3;
+    for(int i = 0; i < iterations; i++){
+        gpioController.Write(pinGreen, PinValue.High);
+        gpioController.Write(pinYellow, PinValue.High);
+        gpioController.Write(pinRed, PinValue.High);
+        Thread.Sleep(onTime);
+        gpioController.Write(pinGreen, PinValue.Low);
+        gpioController.Write(pinYellow, PinValue.Low);
+        gpioController.Write(pinRed, PinValue.Low);
+        Thread.Sleep(offTime);
+    }
+    
+}
+
+void ledBlinking(int ledPin, int sleepTime, int iterations){
+    for(int i = 0; i < iterations; i++){
+        gpioController.Write(ledPin, PinValue.High);
+        Thread.Sleep(sleepTime);
+        gpioController.Write(ledPin, PinValue.Low);
+        Thread.Sleep(sleepTime);
+    }
+}
+
+double ReadTemperature(Dht11 dhtSensorName){
+
+
+    if (!dhtSensorName.TryReadHumidity(out RelativeHumidity humidity))
+    {
+        Console.WriteLine("Can't read humidity");
+        return 0;
+    }
+    
+    return humidity.Value;
+}
+
 void ReadData(CancellationToken cancellationToken)
 {
     Console.WriteLine("Starting reading from RFID reader");
+    welcomeBlink();
+
     var active = true;
 
     do
@@ -70,8 +135,13 @@ void ReadData(CancellationToken cancellationToken)
                     var format = "yyyy-MM-dd hh:mm:ss";
                     data.Add("log_time", now.ToString(format));
                     data.Add("card_id", cardId);
+                    Console.WriteLine(ReadTemperature(dhtSensor));
+                    //Console.WriteLine(url);
+                    //Console.WriteLine(data);
                     SendHttpRequest(url, data);
-                    Thread.Sleep(3000);
+                    gpioController.Write(pinYellow, PinValue.High);
+                    Thread.Sleep(APP_WAIT_TIME);
+                    gpioController.Write(pinYellow, PinValue.Low);
                 }
             }
 
@@ -93,7 +163,17 @@ void SendHttpRequest(String url, Dictionary<string, string> data)
     var request = new HttpRequestMessage(method, url);
     var jsonData = JsonConvert.SerializeObject(data);
     request.Content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
+    //Console.WriteLine(request);
     var response = client.Send(request);
+    //Console.WriteLine(response);
+    var responseStatus = response.IsSuccessStatusCode;
+
+    if(responseStatus){
+        ledBlinking(pinGreen, 500, 2);
+    }
+    else{
+        ledBlinking(pinRed, 500, 2);
+    }
 
     Console.WriteLine("HTTP request sent");
 }
