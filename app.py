@@ -45,5 +45,31 @@ def user_index():
     return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings)
 
 
+@app.route('/users/list', methods=['GET'])
+def list_users():
+    users = db.session.query(
+        User.id,
+        User.first_name,
+        User.last_name
+    ).select_from(User).all()
+    usersData = pd.DataFrame(users)
+    return render_template('main/users.html', usersData = usersData)
+
+
+@app.route('/users/add', methods=['GET', 'POST'])
+def add_user():
+    if request.method == 'GET':
+        return render_template('main/create_user.html')
+    
+    if request.method == 'POST':
+        user_first_name = request.form['user_first_name']
+        user_last_name = request.form['user_last_name']
+
+        new_user = User(first_name = user_first_name, last_name = user_last_name)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('list_users'))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
