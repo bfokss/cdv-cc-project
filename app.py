@@ -46,7 +46,7 @@ def user_index():
 
 
 @app.route('/users/list', methods=['GET'])
-def list_users():
+def user_list():
     users = db.session.query(
         User.id,
         User.first_name,
@@ -57,7 +57,7 @@ def list_users():
 
 
 @app.route('/users/add', methods=['GET', 'POST'])
-def add_user():
+def user_add():
     if request.method == 'GET':
         return render_template('main/create_user.html')
     
@@ -71,7 +71,7 @@ def add_user():
         return redirect(url_for('list_users'))
 
 @app.route('/users/assign', methods=['GET', 'POST'])
-def assign_user():
+def user_assign():
     if request.method == 'GET':
         users = db.session.query(
             User.id,
@@ -104,7 +104,7 @@ def assign_user():
         return redirect(url_for('list_cards'))
 
 @app.route('/cards/list', methods=['GET'])
-def list_cards():
+def card_list():
     cards = db.session.query(
         Card.id,
         Card.user_id,
@@ -115,7 +115,7 @@ def list_cards():
     return render_template('main/cards.html', cardsData = cardsData)
 
 @app.route('/cards/add', methods=['GET', 'POST'])
-def add_card():
+def card_add():
     if request.method == 'GET':
         users = db.session.query(
             User.id,
