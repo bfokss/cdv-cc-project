@@ -70,18 +70,6 @@ def add_user():
         db.session.commit()
         return redirect(url_for('list_users'))
 
-@app.route('/cards/list', methods=['GET'])
-def list_cards():
-    cards = db.session.query(
-        Card.id,
-        Card.user_id,
-        User.first_name,
-        User.last_name,
-    ).select_from(Card).join(User).all()
-    cardsData = pd.DataFrame(cards)
-    return render_template('main/cards.html', cardsData = cardsData)
-
-
 @app.route('/users/assign', methods=['GET', 'POST'])
 def assign_user():
     if request.method == 'GET':
@@ -114,6 +102,43 @@ def assign_user():
             db.session.commit()
 
         return redirect(url_for('list_cards'))
+
+@app.route('/cards/list', methods=['GET'])
+def list_cards():
+    cards = db.session.query(
+        Card.id,
+        Card.user_id,
+        User.first_name,
+        User.last_name,
+    ).select_from(Card).join(User).all()
+    cardsData = pd.DataFrame(cards)
+    return render_template('main/cards.html', cardsData = cardsData)
+
+@app.route('/cards/add', methods=['GET', 'POST'])
+def add_card():
+    if request.method == 'GET':
+        users = db.session.query(
+            User.id,
+            User.first_name,
+            User.last_name
+        ).select_from(User).all()
+
+        usersData = pd.DataFrame(users)
+
+        return render_template('main/create_card.html', usersData=usersData)
+    
+    if request.method == 'POST':
+        card_id = request.form['card_id']
+        user_id = request.form['user_id']
+        user_id = user_id[0]
+
+        new_card = Card(id = card_id, user_id = user_id)
+        db.session.add(new_card)
+        db.session.commit()
+        return redirect(url_for('list_cards'))
+
+
+
 
 
 if __name__ == '__main__':
