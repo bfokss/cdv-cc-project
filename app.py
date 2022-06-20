@@ -36,15 +36,13 @@ def user_index():
     userFirstRow = query.first()
     userData = pd.DataFrame(data)
 
-    #TODO Resolve if we need all trainings in index.html
-    trainings = db.session.query(Event.log_time, Event.event_type, Card.user_id, User.first_name).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId,Event.event_type=="start").order_by(Event.log_time.desc()).all()
+
+    trainings = db.session.query(Event.log_time, Event.event_type, Card.user_id, User.first_name).select_from(Event).join(Card, full=True).join(User, full=True).filter(User.id==userId,Event.event_type=="start").order_by(Event.log_time.desc()).limit(USER_TRAININGS_LIMIT)
     userTrainings = pd.DataFrame(trainings)
 
     isTraining = userData['event_type'][0]=='start'
 
-    return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings, userTrainingsLimit=USER_TRAININGS_LIMIT)
-
-
+    return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings)
 
 
 if __name__ == '__main__':
