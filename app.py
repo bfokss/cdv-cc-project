@@ -70,6 +70,51 @@ def add_user():
         db.session.commit()
         return redirect(url_for('list_users'))
 
+@app.route('/cards/list', methods=['GET'])
+def list_cards():
+    cards = db.session.query(
+        Card.id,
+        Card.user_id,
+        User.first_name,
+        User.last_name,
+    ).select_from(Card).join(User).all()
+    cardsData = pd.DataFrame(cards)
+    return render_template('main/cards.html', cardsData = cardsData)
+
+
+@app.route('/users/assign', methods=['GET', 'POST'])
+def assign_user():
+    if request.method == 'GET':
+        users = db.session.query(
+            User.id,
+            User.first_name,
+            User.last_name
+        ).select_from(User).all()
+
+        cards = db.session.query(
+            Card.id,
+            Card.user_id
+        ).select_from(Card).all()
+
+        usersData = pd.DataFrame(users)
+        cardsData = pd.DataFrame(cards)
+
+        return render_template('main/assign_user.html', usersData=usersData, cardsData=cardsData)
+    
+    if request.method == 'POST':
+        
+
+        user_id = request.form['user_id']
+        user_id = user_id[0]
+        card_id = request.form['card_id']
+
+        card = Card.query.filter_by(id=card_id).first()
+        if card:
+            card.user_id = user_id
+            db.session.commit()
+
+        return redirect(url_for('list_cards'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
