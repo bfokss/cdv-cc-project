@@ -64,18 +64,18 @@
                         <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">ID</th>
                             <th scope="col">First name</th>
                             <th scope="col">Last name</th>
+                            <th scope="col">Card ID</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for index, row in usersData.iterrows()%}
                         <tr>
                             <th scope="row">{{ index+1 }}</th>
-                            <td>{{ row.id }}</td>
                             <td>{{ row.first_name }}</td>
                             <td>{{ row.last_name }}</td>
+                            <td>{{ row.id }}</td>
                         </tr>
                         {% endfor %}
                         </tbody>

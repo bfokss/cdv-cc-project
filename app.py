@@ -48,10 +48,11 @@ def user_index():
 @app.route('/users/list', methods=['GET'])
 def user_list():
     users = db.session.query(
-        User.id,
+        Card.user_id,
         User.first_name,
-        User.last_name
-    ).select_from(User).all()
+        User.last_name,
+        Card.id
+    ).select_from(User).join(Card, full=True).all()
     usersData = pd.DataFrame(users)
     return render_template('main/users.html', usersData = usersData)
 
@@ -68,7 +69,7 @@ def user_add():
         new_user = User(first_name = user_first_name, last_name = user_last_name)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('list_users'))
+        return redirect(url_for('user_list'))
 
 @app.route('/users/assign', methods=['GET', 'POST'])
 def user_assign():
@@ -93,7 +94,10 @@ def user_assign():
         
 
         user_id = request.form['user_id']
+        user_id = user_id.replace(" ","")
+        user_id = user_id.split('-')
         user_id = user_id[0]
+
         card_id = request.form['card_id']
 
         card = Card.query.filter_by(id=card_id).first()
@@ -101,7 +105,7 @@ def user_assign():
             card.user_id = user_id
             db.session.commit()
 
-        return redirect(url_for('list_cards'))
+        return redirect(url_for('card_list'))
 
 @app.route('/cards/list', methods=['GET'])
 def card_list():
@@ -121,7 +125,7 @@ def card_add():
             User.id,
             User.first_name,
             User.last_name
-        ).select_from(User).all()
+        ).select_from(User).join(Card, full=True).filter_by(user_id=None).all()
 
         usersData = pd.DataFrame(users)
 
@@ -130,12 +134,14 @@ def card_add():
     if request.method == 'POST':
         card_id = request.form['card_id']
         user_id = request.form['user_id']
+        user_id = user_id.replace(" ","")
+        user_id = user_id.split('-')
         user_id = user_id[0]
 
         new_card = Card(id = card_id, user_id = user_id)
         db.session.add(new_card)
         db.session.commit()
-        return redirect(url_for('list_cards'))
+        return redirect(url_for('card_list'))
 
 
 
