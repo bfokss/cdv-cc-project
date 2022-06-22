@@ -98,7 +98,7 @@ This project purpose is to read RFID cards through Raspberry Pi with [this](http
 
 4. User sessions
 
-![User sessions gif]()
+![User sessions gif](https://media.giphy.com/media/ZZygeyuUhix1edhRmC/giphy.gif)
 
 5. Adding user
 
