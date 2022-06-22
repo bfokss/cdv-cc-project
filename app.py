@@ -43,7 +43,7 @@ def user_index():
 
     isTraining = userData['event_type'][0]=='start'
 
-    return render_template('main/user/index_user.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings)
+    return render_template('main/user/index_user.html', userId=userId, userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings)
 
 @app.route('/users/sessions', methods=['GET'])
 def user_sessions():
