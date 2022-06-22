@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_restful import Api
 try:
     import project.Config as Config
 except:
@@ -9,7 +8,6 @@ except:
     exit()
 
 app = Flask(__name__)
-api = Api(app)
 
 try:
     app.config['SQLALCHEMY_DATABASE_URI'] = Config.CONNECTION_STRING

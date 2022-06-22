@@ -132,12 +132,10 @@ void ReadData(CancellationToken cancellationToken)
 
                     var data = new Dictionary<string, string>();
                     var now = DateTime.Now;
-                    var format = "yyyy-MM-dd hh:mm:ss";
+                    var format = "yyyy-MM-dd HH:mm:ss";
                     data.Add("log_time", now.ToString(format));
                     data.Add("card_id", cardId);
                     Console.WriteLine(ReadTemperature(dhtSensor));
-                    //Console.WriteLine(url);
-                    //Console.WriteLine(data);
                     SendHttpRequest(url, data);
                     gpioController.Write(pinYellow, PinValue.High);
                     Thread.Sleep(APP_WAIT_TIME);
@@ -163,9 +161,7 @@ void SendHttpRequest(String url, Dictionary<string, string> data)
     var request = new HttpRequestMessage(method, url);
     var jsonData = JsonConvert.SerializeObject(data);
     request.Content = new StringContent(jsonData, System.Text.Encoding.UTF8, "application/json");
-    //Console.WriteLine(request);
     var response = client.Send(request);
-    //Console.WriteLine(response);
     var responseStatus = response.IsSuccessStatusCode;
 
     if(responseStatus){
@@ -175,5 +171,5 @@ void SendHttpRequest(String url, Dictionary<string, string> data)
         ledBlinking(pinRed, 500, 2);
     }
 
-    Console.WriteLine("HTTP request sent");
+    Console.WriteLine("HTTP request sent, response received:", response.StatusCode);
 }
