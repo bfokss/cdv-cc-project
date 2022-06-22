@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for
 import pandas as pd
+import re
 from project import app, db
 from project.models import User, Card, Event
 
@@ -42,7 +43,7 @@ def user_index():
 
     isTraining = userData['event_type'][0]=='start'
 
-    return render_template('main/index.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings)
+    return render_template('main/user/index_user.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings)
 
 
 @app.route('/users/list', methods=['GET'])
@@ -54,13 +55,13 @@ def user_list():
         Card.id
     ).select_from(User).join(Card, full=True).all()
     usersData = pd.DataFrame(users)
-    return render_template('main/users.html', usersData = usersData)
+    return render_template('main/user/list_users.html', usersData = usersData)
 
 
 @app.route('/users/add', methods=['GET', 'POST'])
 def user_add():
     if request.method == 'GET':
-        return render_template('main/create_user.html')
+        return render_template('main/user/add_user.html')
     
     if request.method == 'POST':
         user_first_name = request.form['user_first_name']
@@ -88,16 +89,13 @@ def user_assign():
         usersData = pd.DataFrame(users)
         cardsData = pd.DataFrame(cards)
 
-        return render_template('main/assign_user.html', usersData=usersData, cardsData=cardsData)
+        return render_template('main/user/assign_user.html', usersData=usersData, cardsData=cardsData)
     
     if request.method == 'POST':
         
 
         user_id = request.form['user_id']
-        user_id = user_id.replace(" ","")
-        user_id = user_id.split('-')
-        user_id = user_id[0]
-
+        user_id = re.sub(r"[^\d]","",user_id)
         card_id = request.form['card_id']
 
         card = Card.query.filter_by(id=card_id).first()
@@ -116,7 +114,7 @@ def card_list():
         User.last_name,
     ).select_from(Card).join(User).all()
     cardsData = pd.DataFrame(cards)
-    return render_template('main/cards.html', cardsData = cardsData)
+    return render_template('main/card/list_cards.html', cardsData = cardsData)
 
 @app.route('/cards/add', methods=['GET', 'POST'])
 def card_add():
@@ -129,14 +127,12 @@ def card_add():
 
         usersData = pd.DataFrame(users)
 
-        return render_template('main/create_card.html', usersData=usersData)
+        return render_template('main/card/add_card.html', usersData=usersData)
     
     if request.method == 'POST':
         card_id = request.form['card_id']
         user_id = request.form['user_id']
-        user_id = user_id.replace(" ","")
-        user_id = user_id.split('-')
-        user_id = user_id[0]
+        user_id = re.sub(r"[^\d]","",user_id)
 
         new_card = Card(id = card_id, user_id = user_id)
         db.session.add(new_card)
