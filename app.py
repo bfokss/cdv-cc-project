@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for
 import pandas as pd
 import re
 from project import app, db
-from project.models import User, Card, Event
+from project.models import User, Card, Event, Training
 
 USER_TRAININGS_LIMIT = 10
 
@@ -45,6 +45,28 @@ def user_index():
 
     return render_template('main/user/index_user.html', userData=userData, userFirstRow=userFirstRow, isTraining=isTraining, userTrainings=userTrainings)
 
+@app.route('/users/sessions', methods=['GET'])
+def user_sessions():
+    user_id = request.args.get('id')
+
+    user_exists = db.session.query(User.id).filter_by(id=user_id).first() is not None
+    
+    if ('id' not in request.args) or (not user_exists):
+        return redirect(url_for('index'))
+
+    query = db.session.query(
+        Training.start_time,
+        Training.training_length,
+    ).select_from(Training).join(Card).join(User).filter(User.id==user_id).order_by(Training.start_time.desc())
+
+    raw_data = query.all()
+    df = pd.DataFrame(raw_data)
+
+    df['hours'] = df.apply(lambda row: row['training_length'] // 60 // 60, axis=1)
+    df['minutes'] = df.apply(lambda row: row['training_length'] // 60 % 60, axis=1)
+    df['seconds'] = df.apply(lambda row: row['training_length'] % 60, axis=1)
+
+    return render_template('main/user/sessions_user.html', userSessions=df)
 
 @app.route('/users/list', methods=['GET'])
 def user_list():
