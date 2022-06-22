@@ -41,7 +41,8 @@ class Training(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     card_id = db.Column(db.String(CARD_ID_LENGTH), db.ForeignKey('cards.id'), nullable=False)
-    shift_length = db.Column(db.Integer, nullable=False) # in seconds
+    start_time = db.Column(db.DateTime, nullable=False)
+    training_length = db.Column(db.Integer, nullable=False) # in seconds
 
     def __repr__(self):
-        return f'Training(id={self.id}, card_id={self.card_id}, shift_length={self.shift_length})'
+        return f'Training(id={self.id}, card_id={self.card_id}, start_time={self.start_time}, training_length={self.training_length})'
