@@ -171,5 +171,5 @@ void SendHttpRequest(String url, Dictionary<string, string> data)
         ledBlinking(pinRed, 500, 2);
     }
 
-    Console.WriteLine("HTTP request sent, response received");
+    Console.WriteLine("HTTP request sent, response received:", response.StatusCode);
 }
