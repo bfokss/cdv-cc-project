@@ -1,8 +1,10 @@
-from Config import CONNECTION_STRING
-
 import logging
+from datetime import datetime
+
 import azure.functions as func
 from sqlalchemy import create_engine, text
+
+from Config import CONNECTION_STRING
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -30,12 +32,24 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             if len(cards_found) == 0:
                 return func.HttpResponse(f"Card not in the database", status_code=400)
 
-            last_event_type = connection.execute(text(f"select event_type from events order by log_time desc")).first()
+            last_event = connection.execute(text(f"select log_time, event_type from events where card_id = '{card_id}' order by log_time desc")).first()
+            last_event_type = None if last_event == None else last_event[1]
+            print('last_event:', last_event)
+            print('last_event_type:', last_event_type)
 
-            if len(last_event_type) == 0 or last_event_type[0] == 'stop':
+            # First event for card or last event was of type 'stop'
+            if last_event_type == None or last_event_type == 'stop':
                 new_event_type = 'start'
-            elif last_event_type[0] == 'start':
+            
+            # Last event was of type 'start'
+            elif last_event_type == 'start':
+                timestamp_format = '%Y-%m-%d %H:%M:%S'
                 new_event_type = 'stop'
+                start = last_event[0]
+                finish = datetime.strptime(log_time, timestamp_format)
+                time_delta = finish - start
+                connection.execute(text(f"insert into trainings values ('{card_id}', '{start.strftime(timestamp_format)}', {time_delta.seconds})"))
+                
             else:
                 return func.HttpResponse("Unknown last event type", 500)
 
@@ -44,4 +58,4 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     except Exception as e:
         logging.error(e)
-        return func.HttpResponse(f"Error while trying to connect to db: {e})", status_code=500)
+        return func.HttpResponse(f"Error while accessing database: {e}", status_code=500)
