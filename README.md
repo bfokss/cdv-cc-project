@@ -73,6 +73,9 @@ This project purpose is to read RFID cards through Raspberry Pi with [this](http
 
         http://127.0.0.1:5000
 
+---
+
+
 ### <b>Using app
 
 1. Home page
@@ -86,6 +89,29 @@ This project purpose is to read RFID cards through Raspberry Pi with [this](http
 3. User profile (With active gym session)
 
 ![User profile session gif](https://media.giphy.com/media/WfVAqCrjiHm3UOihIj/giphy.gif)
+
+4. Adding user
+
+![Adding user gif](https://media.giphy.com/media/BgrcW2NoUZ6gqf48h9/giphy.gif)
+
+5. Listing users
+
+![Listing users gif](https://media.giphy.com/media/JQX0Az0x7FgrW0zQ2n/giphy.gif)
+
+6. Assigning users to cards
+
+![Assigning users to cards gif](https://media.giphy.com/media/JQX0Az0x7FgrW0zQ2n/giphy.gif)
+
+7. Adding card
+
+![Adding cards gif](https://media.giphy.com/media/JQX0Az0x7FgrW0zQ2n/giphy.gif)
+
+8. Listing card
+
+![Listing card gif](https://media.giphy.com/media/JQX0Az0x7FgrW0zQ2n/giphy.gif)
+
+
+
 </b>
 
 ### <b>Authors</b>
